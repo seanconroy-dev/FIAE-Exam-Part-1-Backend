@@ -1,7 +1,9 @@
 package com.seanconroy.fiae.resource;
 
+import com.seanconroy.fiae.dto.CardDto;
+import com.seanconroy.fiae.service.CardService;
+import com.seanconroy.fiae.validation.QueryParamValidator;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.Path;
@@ -13,28 +15,28 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.UriInfo;
 
 import java.util.List;
-
-import com.seanconroy.fiae.dto.CardDto;
-import com.seanconroy.fiae.service.CardService;
+import java.util.Set;
 
 @Path("/api/cards")
 public class CardResource {
 
+    private static final Set<String> ALLOWED_QUERY_PARAMS = Set.of("module");
+
     @Inject
     CardService cardService;
+
+    @Inject
+    QueryParamValidator queryParamValidator;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<CardDto> getCards(@Context UriInfo uriInfo,
                                   @QueryParam("module") String module) {
 
-        var queryParams = uriInfo.getQueryParameters();
-
-        for (String param : queryParams.keySet()) {
-            if (!param.equals("module")) {
-                throw new BadRequestException("Invalid query parameter: " + param);
-            }
-        }
+        queryParamValidator.validateAllowedParams(
+            uriInfo.getQueryParameters(),
+            ALLOWED_QUERY_PARAMS
+        );
 
         if (module != null) {
             return cardService.getByModule(module);

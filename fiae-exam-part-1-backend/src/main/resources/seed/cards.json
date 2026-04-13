@@ -3,19 +3,19 @@
         "id": "1",
         "title": "Test Card 1",
         "description": "This is the first test card.",
-        "module": "Test Module"
+        "module": "Hardware"
     },
     {
         "id": "2",
         "title": "Test Card 2",
         "description": "This is the second test card.",
-        "module": "Test Module"
+        "module": "Software"
     },
 
     {
         "id": "3",
         "title": "Test Card 3",
         "description": "This is the third test card.",
-        "module": "Test Module"
+        "module": "Networking"
     }
 ]
