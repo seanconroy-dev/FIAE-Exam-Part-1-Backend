@@ -33,4 +33,7 @@ public class CardService {
             .findFirst()
             .orElse(null);
     }
+    public List<CardDto> getByModule(String module) {
+        return getCards().stream().filter(card -> module.equalsIgnoreCase(card.module)).toList();
+    }
 }
