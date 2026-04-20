@@ -3,6 +3,7 @@ package com.seanconroy.fiae.resource;
 
 import com.seanconroy.fiae.dto.CardDto;
 import com.seanconroy.fiae.dto.ListResponseDto;
+import com.seanconroy.fiae.dto.MarkdownCardDto;
 import com.seanconroy.fiae.dto.MarkdownCardListResponseDto;
 import com.seanconroy.fiae.service.CardService;
 import com.seanconroy.fiae.service.MarkdownCardService;
@@ -104,5 +105,17 @@ public List<String> getFirstMarkdownFrontmatterLines() {
     String raw = markdownCardService.readFirstMarkdownFile();
     String frontmatter = markdownCardService.extractFrontmatter(raw);
     return List.of(frontmatter.split("\n"));
+}
+@GET
+@Path("/markdown/raw-count")
+@Produces(MediaType.TEXT_PLAIN)
+public String countMarkdownContents() {
+    return String.valueOf(markdownCardService.getAllMarkdownFileContents().size());
+}
+@GET
+@Path("/markdown")
+@Produces(MediaType.APPLICATION_JSON)
+public List<MarkdownCardDto> getMarkdownCards() {
+    return markdownCardService.getAllMarkdownCards();
 }
 }
