@@ -5,7 +5,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import java.util.Map;
 
 import jakarta.enterprise.context.ApplicationScoped;
-
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.ArrayList;
@@ -17,13 +17,16 @@ import com.seanconroy.fiae.dto.MarkdownCardDto;
 @ApplicationScoped
 public class MarkdownCardService {
 
-    private static final String CONTENT_ROOT = "src/main/resources/content";
+    @ConfigProperty(name = "content.root")
+    String contentRoot;
 
     public List<Path> getAllMarkdownFiles() {
         List<Path> files = new ArrayList<>();
 
         try {
-            Path root = Paths.get(CONTENT_ROOT);
+            Path root = Paths.get(contentRoot);
+            System.out.println("Scanning root: " + root.toAbsolutePath());
+
 
             if (!Files.exists(root)) {
                 return files;
@@ -31,6 +34,7 @@ public class MarkdownCardService {
 
             Files.walk(root)
                     .filter(path -> path.toString().endsWith(".md"))
+                    .filter(path -> path.getFileName().toString().startsWith("ap1"))
                     .forEach(files::add);
 
         } catch (IOException e) {
@@ -145,4 +149,20 @@ public class MarkdownCardService {
 
         return result;
     }
+    public List<String> getAllMarkdownFileContents() {
+    List<String> contents = new ArrayList<>();
+
+    for (Path file : getAllMarkdownFiles()) {
+        try {
+            contents.add(Files.readString(file));
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read file: " + file, e);
+        }
+    }
+
+    return contents;
+
+
+    
+}
 }
