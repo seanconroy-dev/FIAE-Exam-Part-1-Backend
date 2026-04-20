@@ -1,8 +1,11 @@
+
 package com.seanconroy.fiae.resource;
 
 import com.seanconroy.fiae.dto.CardDto;
 import com.seanconroy.fiae.dto.ListResponseDto;
+import com.seanconroy.fiae.dto.MarkdownCardListResponseDto;
 import com.seanconroy.fiae.service.CardService;
+import com.seanconroy.fiae.service.MarkdownCardService;
 import com.seanconroy.fiae.validation.QueryParamValidator;
 
 
@@ -17,6 +20,8 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.UriInfo;
+
+import java.util.List;
 import java.util.Set;
 
 
@@ -62,5 +67,42 @@ public class CardResource {
 @Produces(MediaType.APPLICATION_JSON)
 public ListResponseDto<CardDto> getAllCards() {
     return new ListResponseDto<>(cardService.getCards());
+}
+@Inject
+MarkdownCardService markdownCardService;
+@GET
+@Path("/markdown/count")
+@Produces(MediaType.TEXT_PLAIN)
+public String countMarkdownFiles() {
+    return String.valueOf(markdownCardService.countMarkdownFiles());
+}
+@GET
+@Path("/markdown/first")
+@Produces(MediaType.TEXT_PLAIN)
+public String getFirstMarkdownFile() {
+    return markdownCardService.readFirstMarkdownFile();
+}
+@GET
+@Path("/markdown/frontmatter")
+@Produces(MediaType.TEXT_PLAIN)
+public String getFirstMarkdownFrontmatter() {
+    String raw = markdownCardService.readFirstMarkdownFile();
+    return markdownCardService.extractFrontmatter(raw);
+}
+@GET
+@Path("/markdown/all")
+@Produces(MediaType.APPLICATION_JSON)
+public MarkdownCardListResponseDto getAllMarkdownCards() {
+    return new MarkdownCardListResponseDto(
+        markdownCardService.getAllMarkdownCards()
+    );
+}
+@GET
+@Path("/markdown/frontmatter-lines")
+@Produces(MediaType.APPLICATION_JSON)
+public List<String> getFirstMarkdownFrontmatterLines() {
+    String raw = markdownCardService.readFirstMarkdownFile();
+    String frontmatter = markdownCardService.extractFrontmatter(raw);
+    return List.of(frontmatter.split("\n"));
 }
 }
