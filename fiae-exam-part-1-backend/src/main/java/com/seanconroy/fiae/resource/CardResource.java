@@ -77,45 +77,25 @@ MarkdownCardService markdownCardService;
 public String countMarkdownFiles() {
     return String.valueOf(markdownCardService.countMarkdownFiles());
 }
-@GET
-@Path("/markdown/first")
-@Produces(MediaType.TEXT_PLAIN)
-public String getFirstMarkdownFile() {
-    return markdownCardService.readFirstMarkdownFile();
-}
-@GET
-@Path("/markdown/frontmatter")
-@Produces(MediaType.TEXT_PLAIN)
-public String getFirstMarkdownFrontmatter() {
-    String raw = markdownCardService.readFirstMarkdownFile();
-    return markdownCardService.extractFrontmatter(raw);
-}
-@GET
-@Path("/markdown/all")
-@Produces(MediaType.APPLICATION_JSON)
-public MarkdownCardListResponseDto getAllMarkdownCards() {
-    return new MarkdownCardListResponseDto(
-        markdownCardService.getAllMarkdownCards()
-    );
-}
-@GET
-@Path("/markdown/frontmatter-lines")
-@Produces(MediaType.APPLICATION_JSON)
-public List<String> getFirstMarkdownFrontmatterLines() {
-    String raw = markdownCardService.readFirstMarkdownFile();
-    String frontmatter = markdownCardService.extractFrontmatter(raw);
-    return List.of(frontmatter.split("\n"));
-}
-@GET
-@Path("/markdown/raw-count")
-@Produces(MediaType.TEXT_PLAIN)
-public String countMarkdownContents() {
-    return String.valueOf(markdownCardService.getAllMarkdownFileContents().size());
-}
+
 @GET
 @Path("/markdown")
 @Produces(MediaType.APPLICATION_JSON)
-public List<MarkdownCardDto> getMarkdownCards() {
+public List<MarkdownCardDto> getMarkdownCards(@QueryParam("module") String module, @Context UriInfo uriInfo) {
+    queryParamValidator.validateAllowedParams(
+        uriInfo.getQueryParameters(),
+        ALLOWED_QUERY_PARAMS
+    );
+    if (module != null && !module.isBlank()) {
+        return markdownCardService.getMarkdownCardsByModule(module);
+    }
+
     return markdownCardService.getAllMarkdownCards();
+}
+@GET
+@Path("/markdown/{slug}")
+@Produces(MediaType.APPLICATION_JSON)
+public MarkdownCardDto getMarkdownCardBySlug(@PathParam("slug") String slug) {
+    return markdownCardService.getMarkdownCardBySlug(slug);
 }
 }
