@@ -15,4 +15,14 @@ public class MarkdownCardDto {
     public String updated;
     public String body;
     public String category;
+
+    public String getModule() {
+    return module;
+}
+public void setModule(String module) {
+    this.module = module;
+}
+public String getSlug() {
+    return slug;
+}
 }
