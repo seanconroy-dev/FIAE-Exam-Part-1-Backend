@@ -2,17 +2,19 @@ package com.seanconroy.fiae.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import java.util.Map;
-
-import jakarta.enterprise.context.ApplicationScoped;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import java.io.IOException;
-import java.nio.file.*;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.seanconroy.fiae.dto.CardContentDto;
 import com.seanconroy.fiae.dto.MarkdownCardDto;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ws.rs.NotFoundException;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @ApplicationScoped
 public class MarkdownCardService {
@@ -26,7 +28,6 @@ public class MarkdownCardService {
         try {
             Path root = Paths.get(contentRoot);
             System.out.println("Scanning root: " + root.toAbsolutePath());
-
 
             if (!Files.exists(root)) {
                 return files;
@@ -56,16 +57,6 @@ public class MarkdownCardService {
         }
     }
 
-    public String readFirstMarkdownFile() {
-        List<Path> files = getAllMarkdownFiles();
-
-        if (files.isEmpty()) {
-            throw new RuntimeException("No markdown files found");
-        }
-
-        return readMarkdownFile(files.get(0));
-    }
-
     public String extractFrontmatter(String raw) {
         int start = raw.indexOf("---");
         int end = raw.indexOf("---", start + 3);
@@ -82,7 +73,7 @@ public class MarkdownCardService {
         int end = raw.indexOf("---", start + 3);
 
         if (start == -1 || end == -1) {
-            return raw; // fallback: whole file
+            return raw;
         }
 
         return raw.substring(end + 3).trim();
@@ -96,7 +87,6 @@ public class MarkdownCardService {
 
         try {
             ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-
             Map<String, Object> yaml = mapper.readValue(frontmatter, Map.class);
 
             MarkdownCardDto dto = new MarkdownCardDto();
@@ -107,16 +97,12 @@ public class MarkdownCardService {
             dto.tags = (List<String>) yaml.get("tags");
             dto.topics = (List<String>) yaml.get("topics");
             dto.module = (String) yaml.get("module");
+            dto.status = (String) yaml.get("status");
             dto.created = String.valueOf(yaml.get("created"));
             dto.updated = String.valueOf(yaml.get("updated"));
-            dto.status = (String) yaml.get("status");
-            dto.created = (String) yaml.get("created");
-            dto.updated = (String) yaml.get("updated");
             dto.body = body;
 
-            // ---- card (nested object) ----
             Map<String, Object> cardMap = (Map<String, Object>) yaml.get("card");
-
             CardContentDto card = new CardContentDto();
 
             if (cardMap != null) {
@@ -125,9 +111,20 @@ public class MarkdownCardService {
                 card.answer = (String) cardMap.get("answer");
                 card.examples = (List<String>) cardMap.get("examples");
 
-                // images (this answers your second problem 👇)
-                card.image = (String) cardMap.get("image");
-                card.answerImage = (String) cardMap.get("answerImage");
+                String image = (String) cardMap.get("image");
+                String answerImage = (String) cardMap.get("answerImage");
+
+                if (image != null && image.startsWith("assets/")) {
+                    card.image = "/api/" + image;
+                } else {
+                    card.image = image;
+                }
+
+                if (answerImage != null && answerImage.startsWith("assets/")) {
+                    card.answerImage = "/api/" + answerImage;
+                } else {
+                    card.answerImage = answerImage;
+                }
             }
 
             dto.card = card;
@@ -149,20 +146,19 @@ public class MarkdownCardService {
 
         return result;
     }
-    public List<String> getAllMarkdownFileContents() {
-    List<String> contents = new ArrayList<>();
 
-    for (Path file : getAllMarkdownFiles()) {
-        try {
-            contents.add(Files.readString(file));
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to read file: " + file, e);
-        }
+    public List<MarkdownCardDto> getMarkdownCardsByModule(String module) {
+        return getAllMarkdownCards().stream()
+                .filter(card -> card.getModule() != null)
+                .filter(card -> card.getModule().equalsIgnoreCase(module))
+                .toList();
     }
 
-    return contents;
-
-
-    
-}
+    public MarkdownCardDto getMarkdownCardBySlug(String slug) {
+        return getAllMarkdownCards().stream()
+                .filter(card -> card.getSlug() != null)
+                .filter(card -> card.getSlug().equalsIgnoreCase(slug))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("Markdown card not found: " + slug));
+    }
 }
