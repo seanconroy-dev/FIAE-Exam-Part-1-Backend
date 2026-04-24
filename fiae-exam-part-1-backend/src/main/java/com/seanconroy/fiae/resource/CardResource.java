@@ -98,4 +98,10 @@ public List<MarkdownCardDto> getMarkdownCards(@QueryParam("module") String modul
 public MarkdownCardDto getMarkdownCardBySlug(@PathParam("slug") String slug) {
     return markdownCardService.getMarkdownCardBySlug(slug);
 }
+@GET
+@Path("/test")
+@Produces(MediaType.APPLICATION_JSON)
+public MarkdownCardDto testGithub() {
+    return markdownCardService.testFetchFromGithub();
+}
 }
