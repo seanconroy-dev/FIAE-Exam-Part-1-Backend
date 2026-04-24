@@ -25,11 +25,10 @@ public class MarkdownCardService {
     @Inject
     GitHubContentService gitHubContentService;
 
-    //temp
-    public List<Path> getAllMarkdownFiles() {
-    List<Path> files = new ArrayList<>();
+public List<String> getAllMarkdownFiles() {
+    List<String> files = new ArrayList<>();
 
-    files.add(Paths.get("Beurteilen marktgängiger IT-Systeme und Lösungen/ap1-0153-hypervisor-typ1-vs-typ2.md"));
+    files.add("Beurteilen%20marktg%C3%A4ngiger%20IT-Systeme%20und%20L%C3%B6sungen/ap1-0153-hypervisor-typ1-vs-typ2.md");
 
     return files;
 }
@@ -61,12 +60,11 @@ public class MarkdownCardService {
         return getAllMarkdownFiles().size();
     }
 
-   public String readMarkdownFile(Path path) {
+public String readMarkdownFile(String path) {
     try {
-        String relativePath = path.toString().replace("\\", "/");
-        return gitHubContentService.fetchFile(relativePath);
+        return gitHubContentService.fetchFile(path);
     } catch (Exception e) {
-        throw new RuntimeException("Failed to read markdown file: " + path.getFileName(), e);
+        throw new RuntimeException("Failed to read markdown file: " + path, e);
     }
 }
 
@@ -138,22 +136,22 @@ public class MarkdownCardService {
         }
     }
 
-    public MarkdownCardDto parseMarkdownCard(Path path) {
+   public MarkdownCardDto parseMarkdownCard(String path) {
 
-        String raw = readMarkdownFile(path);
-        return parseMarkdownCardFromRaw(raw, path.getFileName().toString());
+    String raw = readMarkdownFile(path);
+    return parseMarkdownCardFromRaw(raw, path);
+}
+
+   public List<MarkdownCardDto> getAllMarkdownCards() {
+    List<String> files = getAllMarkdownFiles();
+    List<MarkdownCardDto> result = new ArrayList<>();
+
+    for (String path : files) {
+        result.add(parseMarkdownCard(path));
     }
 
-    public List<MarkdownCardDto> getAllMarkdownCards() {
-        List<Path> files = getAllMarkdownFiles();
-        List<MarkdownCardDto> result = new ArrayList<>();
-
-        for (Path path : files) {
-            result.add(parseMarkdownCard(path));
-        }
-
-        return result;
-    }
+    return result;
+}
 
     public List<MarkdownCardDto> getMarkdownCardsByModule(String module) {
         return getAllMarkdownCards().stream()
