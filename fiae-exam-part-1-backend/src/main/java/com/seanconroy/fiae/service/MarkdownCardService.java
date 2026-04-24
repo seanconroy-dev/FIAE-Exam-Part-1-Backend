@@ -24,13 +24,9 @@ public class MarkdownCardService {
     String contentRoot;
     @Inject
     GitHubContentService gitHubContentService;
-
+    
 public List<String> getAllMarkdownFiles() {
-    List<String> files = new ArrayList<>();
-
-    files.add("Beurteilen%20marktg%C3%A4ngiger%20IT-Systeme%20und%20L%C3%B6sungen/ap1-0153-hypervisor-typ1-vs-typ2.md");
-
-    return files;
+    return gitHubContentService.listMarkdownFiles();
 }
 
 /*     public List<Path> getAllMarkdownFiles() {
