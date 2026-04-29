@@ -24,45 +24,47 @@ public class MarkdownCardService {
     String contentRoot;
     @Inject
     GitHubContentService gitHubContentService;
-    
-public List<String> getAllMarkdownFiles() {
-    return gitHubContentService.listMarkdownFiles();
-}
 
-/*     public List<Path> getAllMarkdownFiles() {
-        List<Path> files = new ArrayList<>();
+    public List<String> getAllMarkdownFiles() {
+        return gitHubContentService.listMarkdownFiles();
+    }
 
-        try {
-            Path root = Paths.get(contentRoot);
-            System.out.println("Scanning root: " + root.toAbsolutePath());
-
-            if (!Files.exists(root)) {
-                return files;
-            }
-
-            Files.walk(root)
-                    .filter(path -> path.toString().endsWith(".md"))
-                    .filter(path -> path.getFileName().toString().startsWith("ap1"))
-                    .forEach(files::add);
-
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to read markdown files", e);
-        }
-
-        return files;
-    } */
+    /*
+     * public List<Path> getAllMarkdownFiles() {
+     * List<Path> files = new ArrayList<>();
+     * 
+     * try {
+     * Path root = Paths.get(contentRoot);
+     * System.out.println("Scanning root: " + root.toAbsolutePath());
+     * 
+     * if (!Files.exists(root)) {
+     * return files;
+     * }
+     * 
+     * Files.walk(root)
+     * .filter(path -> path.toString().endsWith(".md"))
+     * .filter(path -> path.getFileName().toString().startsWith("ap1"))
+     * .forEach(files::add);
+     * 
+     * } catch (IOException e) {
+     * throw new RuntimeException("Failed to read markdown files", e);
+     * }
+     * 
+     * return files;
+     * }
+     */
 
     public int countMarkdownFiles() {
         return getAllMarkdownFiles().size();
     }
 
-public String readMarkdownFile(String path) {
-    try {
-        return gitHubContentService.fetchFile(path);
-    } catch (Exception e) {
-        throw new RuntimeException("Failed to read markdown file: " + path, e);
+    public String readMarkdownFile(String path) {
+        try {
+            return gitHubContentService.fetchFile(path);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to read markdown file: " + path, e);
+        }
     }
-}
 
     public String extractFrontmatter(String raw) {
         int start = raw.indexOf("---");
@@ -120,8 +122,8 @@ public String readMarkdownFile(String path) {
             card.answer = (String) cardMap.get("answer");
             card.examples = cardMap.get("examples") != null ? (List<String>) cardMap.get("examples")
                     : new ArrayList<>();
-            card.image = (String) cardMap.get("image");
-            card.answerImage = (String) cardMap.get("answerImage");
+            card.image = toRawAssetUrl((String) cardMap.get("image"));
+            card.answerImage = toRawAssetUrl((String) cardMap.get("answerImage"));
 
             dto.card = card;
 
@@ -132,22 +134,22 @@ public String readMarkdownFile(String path) {
         }
     }
 
-   public MarkdownCardDto parseMarkdownCard(String path) {
+    public MarkdownCardDto parseMarkdownCard(String path) {
 
-    String raw = readMarkdownFile(path);
-    return parseMarkdownCardFromRaw(raw, path);
-}
-
-   public List<MarkdownCardDto> getAllMarkdownCards() {
-    List<String> files = getAllMarkdownFiles();
-    List<MarkdownCardDto> result = new ArrayList<>();
-
-    for (String path : files) {
-        result.add(parseMarkdownCard(path));
+        String raw = readMarkdownFile(path);
+        return parseMarkdownCardFromRaw(raw, path);
     }
 
-    return result;
-}
+    public List<MarkdownCardDto> getAllMarkdownCards() {
+        List<String> files = getAllMarkdownFiles();
+        List<MarkdownCardDto> result = new ArrayList<>();
+
+        for (String path : files) {
+            result.add(parseMarkdownCard(path));
+        }
+
+        return result;
+    }
 
     public List<MarkdownCardDto> getMarkdownCardsByModule(String module) {
         return getAllMarkdownCards().stream()
@@ -186,4 +188,15 @@ public String readMarkdownFile(String path) {
 
         return parseMarkdownCardFromRaw(raw, "github-test");
     }
+    private String toRawAssetUrl(String path) {
+    if (path == null || path.isBlank()) {
+        return null;
+    }
+
+    if (path.startsWith("http://") || path.startsWith("https://")) {
+        return path;
+    }
+
+    return gitHubContentService.toRawUrl(path);
+}
 }

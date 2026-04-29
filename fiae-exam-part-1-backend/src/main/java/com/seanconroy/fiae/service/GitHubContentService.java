@@ -113,4 +113,7 @@ public class GitHubContentService {
                 .replace("+", "%20")
                 .replace("%2F", "/");
     }
+    public String toRawUrl(String path) {
+    return RAW_BASE_URL + "/" + encodePath(path);
+}
 }
