@@ -155,4 +155,4 @@ card:
 Markdown body content here...
 ```
 
-Image paths in frontmatter are automatically resolved to raw GitHub URLs.
+Image paths in frontmatter are automatically resolved to raw GitHub URLs. 
