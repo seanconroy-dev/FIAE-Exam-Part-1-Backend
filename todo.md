@@ -6,7 +6,7 @@
 - [x] Create Flyway migration: `whitelist_user`, `learning_progress`, `quiz_session`, `quiz_session_card`
 - [x] Database schema stores only api_key_hash, no plaintext API key column
 
-Phase 2 — Whitelist & Auth
+## Phase 2 — Whitelist & Auth
 [ ] Create WhitelistUser entity, WhitelistUserRepository, WhitelistService
 [ ] Generate API keys on backend
 [ ] Hash API key before storing it
