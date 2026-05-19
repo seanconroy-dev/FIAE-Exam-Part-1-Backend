@@ -1,10 +1,10 @@
 # Todo: Persistent Backend for Whitelisted Users
 
 ## Phase 1 — Database Setup
-- [ ] Add dependencies: `hibernate-orm-panache`, `jdbc-postgresql`, `jdbc-h2` (dev), `flyway`
-- [ ] Configure datasource in `application.properties` (dev + prod profiles)
-- [ ] Create Flyway migration: `whitelist_user`, `learning_progress`, `quiz_session`, `quiz_session_card`
-- [ ] Store only hashed API keys — never plaintext
+- [x] Add dependencies: `hibernate-orm-panache`, `jdbc-postgresql`, `jdbc-h2` (dev), `flyway`
+- [x] Configure datasource in `application.properties` (dev + prod profiles)
+- [x] Create Flyway migration: `whitelist_user`, `learning_progress`, `quiz_session`, `quiz_session_card`
+- [x] Database schema stores only api_key_hash, no plaintext API key column
 
 ## Phase 2 — Whitelist & Auth
 - [ ] Create `WhitelistUser` entity, repository, service
