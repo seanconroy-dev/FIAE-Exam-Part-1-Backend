@@ -6,13 +6,16 @@
 - [x] Create Flyway migration: `whitelist_user`, `learning_progress`, `quiz_session`, `quiz_session_card`
 - [x] Database schema stores only api_key_hash, no plaintext API key column
 
-## Phase 2 — Whitelist & Auth
-- [ ] Create `WhitelistUser` entity, repository, service
-- [ ] Generate API keys on backend; hash before storing (SHA-256 or bcrypt)
-- [ ] Add `@ServerRequestFilter`: read `X-API-Key`, resolve user, block missing/invalid/inactive with `403`
-- [ ] Never trust client-supplied `userId` after auth is active
-- [ ] `GET /api/auth/me` — return resolved user info
-- [ ] `POST /api/admin/whitelist` — admin-only (env var `ADMIN_TOKEN`); return plaintext key once
+Phase 2 — Whitelist & Auth
+[ ] Create WhitelistUser entity, WhitelistUserRepository, WhitelistService
+[ ] Generate API keys on backend
+[ ] Hash API key before storing it
+[ ] Return plaintext API key only once during whitelist creation
+[ ] Never return api_key_hash in API responses
+[ ] Add auth filter: read X-API-Key, resolve user, block missing/invalid/inactive with 403
+[ ] Never trust client-supplied userId after auth is active
+[ ] GET /api/auth/me — return resolved user info
+[ ] POST /api/admin/whitelist — admin-only via ADMIN_TOKEN, return plaintext key once
 
 ## Phase 3 — Learning Progress API
 - [ ] Create `LearningProgress` entity, repository, service
