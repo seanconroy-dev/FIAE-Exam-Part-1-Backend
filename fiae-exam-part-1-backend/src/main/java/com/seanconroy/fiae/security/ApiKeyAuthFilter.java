@@ -13,7 +13,6 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
 import org.jboss.logging.Logger;
 
-
 import java.util.Optional;
 
 @Provider
@@ -30,7 +29,14 @@ public class ApiKeyAuthFilter implements ContainerRequestFilter {
 
     @Override
     public void filter(ContainerRequestContext requestContext) {
+
+       // LOG.infof("API AuthFilter reached for path: /%s", requestContext.getUriInfo().getPath());
+
         String path = requestContext.getUriInfo().getPath();
+
+        while (path.startsWith("/")) {
+            path = path.substring(1);
+        }
 
         if (!path.startsWith("api/")) {
             return;
@@ -40,7 +46,7 @@ public class ApiKeyAuthFilter implements ContainerRequestFilter {
             return;
         }
 
-        String apiKey = requestContext.getHeaderString("X-API-KEY");
+        String apiKey = requestContext.getHeaderString("X-API-Key");
 
         Optional<WhitelistUser> resolvedUser = whitelistService.resolveUserFromApiKey(apiKey);
 
@@ -50,15 +56,17 @@ public class ApiKeyAuthFilter implements ContainerRequestFilter {
             requestContext.abortWith(
                     Response.status(Response.Status.FORBIDDEN)
                             .entity("{\"message\":\"Missing or invalid API key\",\"status\":403}")
+                            .type(MediaType.APPLICATION_JSON)
                             .build());
             return;
         }
         authContext.setCurrentUser(resolvedUser.get());
     }
+
     private boolean isPublicPath(String path) {
         return path.startsWith("api/cards/")
-        || path.startsWith("api/assets/")
-        || path.startsWith("api/health")
-        || path.startsWith("api/admin/");
+                || path.startsWith("api/assets/")
+                || path.startsWith("api/health")
+                || path.startsWith("api/admin/");
     }
 }
