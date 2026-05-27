@@ -7,18 +7,20 @@
 - [x] Database schema stores only api_key_hash, no plaintext API key column
 
 ## Phase 2 — Whitelist & Auth
-- [ ] Create WhitelistUser entity, WhitelistUserRepository, WhitelistService
-- [ ] Generate API keys on backend
-- [ ] Hash API key before storing it
-- [ ] Return plaintext API key only once during whitelist creation
-- [ ] Never return api_key_hash in API responses
-- [ ] Add auth filter: read X-API-Key, resolve user, block missing/invalid/inactive with 403
-- [ ] Never trust client-supplied userId after auth is active
-- [ ] GET /api/auth/me — return resolved user info
-- [ ] POST /api/admin/whitelist — admin-only via ADMIN_TOKEN, return plaintext key once
+- [x] Create WhitelistUser entity, WhitelistUserRepository, WhitelistService
+- [x] Generate API keys on backend
+- [x] Hash API key before storing it
+- [x] Return plaintext API key only once during whitelist creation
+- [x] Never return api_key_hash in API responses
+- [x] Add auth filter: read X-API-Key, resolve user, block missing/invalid/inactive with 403
+- [x] Never trust client-supplied userId after auth is active
+- [x] GET /api/auth/me — return resolved user info
+- [x] POST /api/admin/whitelist — admin-only via ADMIN_TOKEN, return plaintext key once
 
 ## Phase 3 — Learning Progress API
-- [ ] Create `LearningProgress` entity, repository, service
+- [x] Create `LearningProgress` entity
+- [x] Create `LearningProgressRepository`
+- [ ] Create `LearningProgressService`
 - [ ] Upsert logic: increment `times_seen`, `times_correct`, update `last_seen_at`
 - [ ] Derive `userId` from API key — do not accept it from frontend
 - [ ] `GET /api/progress` — all progress for authenticated user
