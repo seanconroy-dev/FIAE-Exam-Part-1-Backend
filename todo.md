@@ -20,9 +20,9 @@
 ## Phase 3 — Learning Progress API
 - [x] Create `LearningProgress` entity
 - [x] Create `LearningProgressRepository`
-- [ ] Create `LearningProgressService`
-- [ ] Upsert logic: increment `times_seen`, `times_correct`, update `last_seen_at`
-- [ ] Derive `userId` from API key — do not accept it from frontend
+- [x] Create `LearningProgressService`
+- [x] Upsert logic: increment `times_seen`, `times_correct`, update `last_seen_at`
+- [x] Derive `userId` from API key — do not accept it from frontend
 - [ ] `GET /api/progress` — all progress for authenticated user
 - [ ] `GET /api/progress/{cardSlug}` — single card progress
 - [ ] `POST /api/progress/{cardSlug}` — body: `{ "wasCorrect": true }`
