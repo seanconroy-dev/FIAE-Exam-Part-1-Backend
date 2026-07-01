@@ -12,7 +12,7 @@ public class AuthContext {
         return currentUser;
     }
 
-    public void setCurrentUser(WhitelistUser currenUser){
-        this.currentUser = currenUser;
+    public void setCurrentUser(WhitelistUser currentUser){
+        this.currentUser = currentUser;
     }
 }
