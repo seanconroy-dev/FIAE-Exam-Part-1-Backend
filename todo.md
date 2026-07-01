@@ -25,7 +25,7 @@
 - [x] Derive `userId` from API key — do not accept it from frontend
 - [x] `GET /api/progress` — all progress for authenticated user
 - [x] `GET /api/progress/{cardSlug}` — single card progress
-- [ ] `POST /api/progress/{cardSlug}` — body: `{ "wasCorrect": true }`
+- [x] `POST /api/progress/{cardSlug}` — body: `{ "wasCorrect": true }`
 - [ ] `DELETE /api/progress` — idempotent; return `204` even if nothing existed
 
 ## Phase 4 — Quiz Session API
