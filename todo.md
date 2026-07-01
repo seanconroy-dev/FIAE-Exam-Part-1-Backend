@@ -26,7 +26,7 @@
 - [x] `GET /api/progress` — all progress for authenticated user
 - [x] `GET /api/progress/{cardSlug}` — single card progress
 - [x] `POST /api/progress/{cardSlug}` — body: `{ "wasCorrect": true }`
-- [ ] `DELETE /api/progress` — idempotent; return `204` even if nothing existed
+- [x] `DELETE /api/progress` — idempotent; return `204` even if nothing existed
 
 ## Phase 4 — Quiz Session API
 - [ ] Create `QuizSession` + `QuizSessionCard` entities, repositories, service
