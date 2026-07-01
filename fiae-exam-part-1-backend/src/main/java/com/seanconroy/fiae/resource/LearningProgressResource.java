@@ -19,6 +19,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.DELETE;
 
 @Produces(MediaType.APPLICATION_JSON)
 
@@ -90,4 +91,18 @@ public Response recordAnswer(@PathParam("cardSlug") String cardSlug, UpdateProgr
 
     return Response.ok(response).build();
 }
+
+@DELETE
+public Response deleteAllProgress(){
+    WhitelistUser user = authContext.getCurrentUser();
+
+    if ( user == null) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+        learningProgressService.deleteProgressForUser(user);
+
+        return Response.noContent().build();
+
+}
+
 }
