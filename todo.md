@@ -35,7 +35,7 @@
 - [x] `POST /api/sessions` — start session; body: `{ "module": "..." }`; return session summary
 - [x] `POST /api/sessions/{id}/answer` — body: `{ "cardSlug": "...", "wasCorrect": true }`
 - [x] `POST /api/sessions/{id}/complete` — finalize score, set `completed_at`
-- [ ] `GET /api/sessions` — all sessions for authenticated user
+- [x] `GET /api/sessions` — all sessions for authenticated user
 - [x] `GET /api/sessions/{id}` — session summary only, owner only
 - [x] `GET /api/sessions/{id}/answers` — card results for session, owner only
 
