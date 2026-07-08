@@ -29,14 +29,15 @@
 - [x] `DELETE /api/progress` — idempotent; return `204` even if nothing existed
 
 ## Phase 4 — Quiz Session API
-- [ ] Create `QuizSession` + `QuizSessionCard` entities, repositories, service
-- [ ] Tie sessions to authenticated user; never accept `userId` from frontend
-- [ ] Ownership check on every session endpoint — return `403` for other users' sessions
-- [ ] `POST /api/sessions` — start session; body: `{ "module": "..." }`; return `{ "sessionId": "..." }`
-- [ ] `POST /api/sessions/{id}/answer` — body: `{ "cardSlug": "...", "wasCorrect": true }`
-- [ ] `POST /api/sessions/{id}/complete` — finalize score, set `completed_at`
+- [x] Create `QuizSession` + `QuizSessionCard` entities, repositories, service
+- [x] Tie sessions to authenticated user; never accept `userId` from frontend
+- [x] Ownership check on every session endpoint — return `403` for other users' sessions
+- [x] `POST /api/sessions` — start session; body: `{ "module": "..." }`; return session summary
+- [x] `POST /api/sessions/{id}/answer` — body: `{ "cardSlug": "...", "wasCorrect": true }`
+- [x] `POST /api/sessions/{id}/complete` — finalize score, set `completed_at`
 - [ ] `GET /api/sessions` — all sessions for authenticated user
-- [ ] `GET /api/sessions/{id}` — full session with card results (owner only)
+- [x] `GET /api/sessions/{id}` — session summary only, owner only
+- [x] `GET /api/sessions/{id}/answers` — card results for session, owner only
 
 ## Phase 5 — Cards API Extension
 - [ ] Keep `GET /api/cards/markdown` and `GET /api/cards/markdown/{slug}` unchanged
