@@ -36,7 +36,7 @@ public class QuizSessionService {
     /**
      * Creates a new quiz session for the authenticated user.
      *
-     * @param user authenticated user
+     * @param user   authenticated user
      * @param module selected quiz module
      * @return newly created quiz session
      */
@@ -60,9 +60,9 @@ public class QuizSessionService {
     /**
      * Records one answer for a quiz session owned by the authenticated user.
      *
-     * @param user authenticated user
-     * @param sessionId quiz session ID
-     * @param cardSlug answered card identifier
+     * @param user       authenticated user
+     * @param sessionId  quiz session ID
+     * @param cardSlug   answered card identifier
      * @param wasCorrect whether the answer was correct
      * @return saved answer, or empty if the session is not owned/found
      */
@@ -71,10 +71,8 @@ public class QuizSessionService {
             WhitelistUser user,
             UUID sessionId,
             String cardSlug,
-            boolean wasCorrect
-    ) {
-        Optional<QuizSession> sessionOptional =
-                quizSessionRepository.findByUserAndSessionId(user, sessionId);
+            boolean wasCorrect) {
+        Optional<QuizSession> sessionOptional = quizSessionRepository.findByUserAndSessionId(user, sessionId);
 
         if (sessionOptional.isEmpty()) {
             return Optional.empty();
@@ -96,14 +94,13 @@ public class QuizSessionService {
     /**
      * Completes a quiz session and stores the final score.
      *
-     * @param user authenticated user
+     * @param user      authenticated user
      * @param sessionId quiz session ID
      * @return completed session, or empty if the session is not owned/found
      */
     @Transactional
     public Optional<QuizSession> completeSession(WhitelistUser user, UUID sessionId) {
-        Optional<QuizSession> sessionOptional =
-                quizSessionRepository.findByUserAndSessionId(user, sessionId);
+        Optional<QuizSession> sessionOptional = quizSessionRepository.findByUserAndSessionId(user, sessionId);
 
         if (sessionOptional.isEmpty()) {
             return Optional.empty();
@@ -111,8 +108,7 @@ public class QuizSessionService {
 
         QuizSession session = sessionOptional.get();
 
-        List<QuizSessionCard> cards =
-                quizSessionCardRepository.findBySession(session);
+        List<QuizSessionCard> cards = quizSessionCardRepository.findBySession(session);
 
         int scoreCorrect = 0;
 
@@ -134,7 +130,7 @@ public class QuizSessionService {
     /**
      * Finds a quiz session owned by the authenticated user.
      *
-     * @param user authenticated user
+     * @param user      authenticated user
      * @param sessionId quiz session ID
      * @return quiz session, or empty if the session is not owned/found
      */
@@ -143,15 +139,15 @@ public class QuizSessionService {
     }
 
     /**
-     * Returns all recorded answers for a quiz session owned by the authenticated user.
+     * Returns all recorded answers for a quiz session owned by the authenticated
+     * user.
      *
-     * @param user authenticated user
+     * @param user      authenticated user
      * @param sessionId quiz session ID
      * @return answer list, or empty if the session is not owned/found
      */
     public Optional<List<QuizSessionCard>> getAnswersForSession(WhitelistUser user, UUID sessionId) {
-        Optional<QuizSession> sessionOptional =
-                quizSessionRepository.findByUserAndSessionId(user, sessionId);
+        Optional<QuizSession> sessionOptional = quizSessionRepository.findByUserAndSessionId(user, sessionId);
 
         if (sessionOptional.isEmpty()) {
             return Optional.empty();
@@ -159,11 +155,18 @@ public class QuizSessionService {
 
         QuizSession session = sessionOptional.get();
 
-        List<QuizSessionCard> answerRows =
-                quizSessionCardRepository.findBySession(session);
+        List<QuizSessionCard> answerRows = quizSessionCardRepository.findBySession(session);
 
         return Optional.of(answerRows);
     }
 
- 
+    /**
+     * Returns all quiz sessions owned by the authenticated user.
+     *
+     * @param user authenticated user
+     * @return list of quiz sessions; empty if the user has no sessions
+     */
+    public List<QuizSession> getSessionsForUser(WhitelistUser user) {
+        return quizSessionRepository.findByUser(user);
+    }
 }

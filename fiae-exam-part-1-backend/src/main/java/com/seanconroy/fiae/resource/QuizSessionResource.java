@@ -68,8 +68,7 @@ public class QuizSessionResource {
                 session.startedAt,
                 session.completedAt,
                 session.scoreCorrect,
-                session.scoreWrong
-        );
+                session.scoreWrong);
 
         return Response.ok(response).build();
     }
@@ -78,15 +77,15 @@ public class QuizSessionResource {
      * Records one answer for a quiz session owned by the authenticated user.
      *
      * @param sessionId quiz session ID from the URL path
-     * @param request request body containing cardSlug and wasCorrect
-     * @return saved answer, or 403 if the user is not authenticated or does not own the session
+     * @param request   request body containing cardSlug and wasCorrect
+     * @return saved answer, or 403 if the user is not authenticated or does not own
+     *         the session
      */
     @POST
     @Path("/{sessionId}/answer")
     public Response recordAnswer(
             @PathParam("sessionId") UUID sessionId,
-            RecordQuizAnswerRequestDto request
-    ) {
+            RecordQuizAnswerRequestDto request) {
         WhitelistUser user = authContext.getCurrentUser();
 
         if (user == null) {
@@ -97,8 +96,7 @@ public class QuizSessionResource {
                 user,
                 sessionId,
                 request.cardSlug,
-                request.wasCorrect
-        );
+                request.wasCorrect);
 
         if (cardResultOptional.isEmpty()) {
             return Response.status(Response.Status.FORBIDDEN).build();
@@ -109,8 +107,7 @@ public class QuizSessionResource {
         QuizAnswerResponseDto response = new QuizAnswerResponseDto(
                 cardResult.cardSlug,
                 cardResult.wasCorrect,
-                cardResult.answeredAt
-        );
+                cardResult.answeredAt);
 
         return Response.ok(response).build();
     }
@@ -119,7 +116,8 @@ public class QuizSessionResource {
      * Completes a quiz session and returns the final score.
      *
      * @param sessionId quiz session ID from the URL path
-     * @return completed session, or 403 if the user is not authenticated or does not own the session
+     * @return completed session, or 403 if the user is not authenticated or does
+     *         not own the session
      */
     @POST
     @Path("/{sessionId}/complete")
@@ -144,8 +142,7 @@ public class QuizSessionResource {
                 session.startedAt,
                 session.completedAt,
                 session.scoreCorrect,
-                session.scoreWrong
-        );
+                session.scoreWrong);
 
         return Response.ok(response).build();
     }
@@ -154,7 +151,8 @@ public class QuizSessionResource {
      * Returns one quiz session owned by the authenticated user.
      *
      * @param sessionId quiz session ID from the URL path
-     * @return quiz session, or 403 if the user is not authenticated or does not own the session
+     * @return quiz session, or 403 if the user is not authenticated or does not own
+     *         the session
      */
     @GET
     @Path("/{sessionId}")
@@ -179,17 +177,18 @@ public class QuizSessionResource {
                 session.startedAt,
                 session.completedAt,
                 session.scoreCorrect,
-                session.scoreWrong
-        );
+                session.scoreWrong);
 
         return Response.ok(response).build();
     }
 
     /**
-     * Returns all recorded answers for a quiz session owned by the authenticated user.
+     * Returns all recorded answers for a quiz session owned by the authenticated
+     * user.
      *
      * @param sessionId quiz session ID from the URL path
-     * @return answer list, or 403 if the user is not authenticated or does not own the session
+     * @return answer list, or 403 if the user is not authenticated or does not own
+     *         the session
      */
     @GET
     @Path("/{sessionId}/answers")
@@ -200,8 +199,7 @@ public class QuizSessionResource {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
-        Optional<List<QuizSessionCard>> answerRowsOptional =
-                quizSessionService.getAnswersForSession(user, sessionId);
+        Optional<List<QuizSessionCard>> answerRowsOptional = quizSessionService.getAnswersForSession(user, sessionId);
 
         if (answerRowsOptional.isEmpty()) {
             return Response.status(Response.Status.FORBIDDEN).build();
@@ -214,12 +212,43 @@ public class QuizSessionResource {
             QuizAnswerResponseDto dto = new QuizAnswerResponseDto(
                     answerRow.cardSlug,
                     answerRow.wasCorrect,
-                    answerRow.answeredAt
-            );
+                    answerRow.answeredAt);
 
             responseList.add(dto);
         }
 
         return Response.ok(responseList).build();
     }
+
+ /**
+ * Returns all quiz sessions owned by the authenticated user.
+ *
+ * @return quiz session list, or 403 if the user is not authenticated
+ */
+@GET
+public Response getAllSessions() {
+    WhitelistUser user = authContext.getCurrentUser();
+
+    if (user == null) {
+        return Response.status(Response.Status.FORBIDDEN).build();
+    }
+
+    List<QuizSession> sessions = quizSessionService.getSessionsForUser(user);
+    List<QuizSessionResponseDto> responseList = new ArrayList<>();
+
+    for (QuizSession session : sessions) {
+        QuizSessionResponseDto dto = new QuizSessionResponseDto(
+                session.sessionId,
+                session.module,
+                session.startedAt,
+                session.completedAt,
+                session.scoreCorrect,
+                session.scoreWrong
+        );
+
+        responseList.add(dto);
+    }
+
+    return Response.ok(responseList).build();
+}
 }
