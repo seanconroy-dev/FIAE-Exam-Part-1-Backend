@@ -10,6 +10,7 @@ import com.seanconroy.fiae.service.AuthContext;
 import com.seanconroy.fiae.service.LearningProgressService;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -20,6 +21,8 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.WebApplicationException;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Path("/api/progress")
@@ -49,6 +52,7 @@ public class ProgressResource {
     @Path("/{cardSlug}/answer")
     public Response recordAnswer(@PathParam("cardSlug") String cardSlug, @Valid RecordAnswerRequestDto request) {
         WhitelistUser currentUser = requireCurrentUser();
+        validateCardSlug(cardSlug);
         LearningProgress progress = learningProgressService.recordAnswer(currentUser, cardSlug, request.correct);
         return Response.ok(new LearningProgressResponseDto(progress)).build();
     }
@@ -65,5 +69,13 @@ public class ProgressResource {
         }
 
         return currentUser;
+    }
+
+    private void validateCardSlug(String cardSlug) {
+        String decodedCardSlug = cardSlug == null ? null : URLDecoder.decode(cardSlug, StandardCharsets.UTF_8);
+
+        if (decodedCardSlug == null || decodedCardSlug.isBlank()) {
+            throw new BadRequestException("Path parameter 'cardSlug' cannot be blank");
+        }
     }
 }

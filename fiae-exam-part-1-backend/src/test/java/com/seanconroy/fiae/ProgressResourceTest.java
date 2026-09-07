@@ -169,6 +169,65 @@ class ProgressResourceTest {
     }
 
     @Test
+    void getProgressRejectsMissingOrInvalidApiKey() {
+        given()
+                .when()
+                .get("/api/progress")
+                .then()
+                .statusCode(403);
+
+        given()
+                .header("X-API-Key", "invalid-api-key")
+                .when()
+                .get("/api/progress")
+                .then()
+                .statusCode(403);
+    }
+
+    @Test
+    void blankOrWhitespaceCardSlugIsRejected() {
+        String apiKey = createApiKey();
+
+        given()
+                .contentType("application/json")
+                .header("X-API-Key", apiKey)
+                .body(Map.of("correct", true))
+                .when()
+                .post("/api/progress/%20%20/answer")
+                .then()
+                .statusCode(400)
+                .body("message", equalTo("Path parameter 'cardSlug' cannot be blank"))
+                .body("status", equalTo(400));
+    }
+
+    @Test
+    void missingOrNullCorrectIsRejected() {
+        String apiKey = createApiKey();
+
+        given()
+                .contentType("application/json")
+                .header("X-API-Key", apiKey)
+                .body("{}")
+                .when()
+                .post("/api/progress/card-missing-correct/answer")
+                .then()
+                .statusCode(400)
+                .body("message", equalTo("must not be null"))
+                .body("status", equalTo(400));
+
+        given()
+                .contentType("application/json")
+                .header("X-API-Key", apiKey)
+                .body("{\"correct\":null}")
+                .when()
+                .post("/api/progress/card-null-correct/answer")
+                .then()
+                .statusCode(400)
+                .body("message", equalTo("must not be null"))
+                .body("status", equalTo(400));
+    }
+
+    @Test
     void publicCardEndpointsRemainAccessibleWithoutAuthentication() {
         given()
                 .when()
