@@ -72,8 +72,8 @@ class ProgressResourceTest {
                 .then()
                 .statusCode(200)
                 .body("data.size()", equalTo(1))
-                .body("data[0].id", equalTo(firstAnswer.getLong("id").intValue()))
-                .body("data[0].id", equalTo(secondAnswer.getLong("id").intValue()))
+                .body("data[0].id", equalTo((int) firstAnswer.getLong("id")))
+                .body("data[0].id", equalTo((int) secondAnswer.getLong("id")))
                 .body("data[0].timesSeen", equalTo(2))
                 .body("data[0].timesCorrect", equalTo(1));
     }
