@@ -1,5 +1,6 @@
 package com.seanconroy.fiae.resource;
 
+import com.seanconroy.fiae.dto.ErrorResponseDto;
 import com.seanconroy.fiae.dto.LearningProgressResponseDto;
 import com.seanconroy.fiae.dto.ListResponseDto;
 import com.seanconroy.fiae.dto.RecordAnswerRequestDto;
@@ -17,6 +18,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.WebApplicationException;
 
 import java.util.List;
 
@@ -55,7 +57,11 @@ public class ProgressResource {
         WhitelistUser currentUser = authContext.getCurrentUser();
 
         if (currentUser == null) {
-            throw new jakarta.ws.rs.ForbiddenException("Missing or invalid API key");
+            throw new WebApplicationException(
+                    Response.status(Response.Status.FORBIDDEN)
+                            .entity(new ErrorResponseDto("Missing or invalid API key", 403))
+                            .type(MediaType.APPLICATION_JSON)
+                            .build());
         }
 
         return currentUser;
