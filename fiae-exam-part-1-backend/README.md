@@ -14,6 +14,43 @@ You can run your application in dev mode that enables live coding using:
 
 > **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
 
+## Postgres setup for persistent whitelist users
+
+Whitelist users persist only when the backend runs against a persistent database (PostgreSQL in production profile).
+
+### Is Postgres free?
+
+Yes, you can start on free tiers:
+- Neon (recommended starter option)
+- Supabase
+- Render Postgres
+
+Free tiers usually include limits (storage, monthly compute hours, and auto-sleep).
+
+### Hosted setup steps (Neon/Supabase/Render)
+
+1. Create a Postgres database in your provider dashboard.
+2. Copy host, port, database name, username, and password.
+3. Set backend environment variables:
+   - `DB_URL=jdbc:postgresql://<HOST>:5432/<DATABASE>`
+   - `DB_USER=<USERNAME>`
+   - `QUARKUS_DATASOURCE_PASSWORD=<PASSWORD>`
+   - `ADMIN_TOKEN=<YOUR_ADMIN_TOKEN>`
+4. Run backend in prod profile:
+   - `./mvnw quarkus:dev -Dquarkus.profile=prod`
+   - or package and run with `-Dquarkus.profile=prod`
+5. Flyway runs automatically on startup (`quarkus.flyway.migrate-at-start=true`) and creates required tables.
+
+### GitHub Pages frontend
+
+If your frontend is hosted on GitHub Pages, keep that origin in CORS:
+
+```properties
+quarkus.http.cors.origins=https://seanconroy-dev.github.io,http://localhost:4321
+```
+
+If the Pages URL changes, add the new exact origin there.
+
 ## Packaging and running the application
 
 The application can be packaged using:
